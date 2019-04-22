@@ -1,0 +1,67 @@
+<pre fxHide>{{columnChanges$ | async | json }}</pre>
+
+<mat-toolbar>
+
+  <mat-toolbar-row>
+
+      <span>{{dataSource.data?.length }} record(s) found</span>
+      <span fxFlex></span>
+
+      <button mat-icon-button [matMenuTriggerFor]="filter">
+              <mat-icon>filter_list</mat-icon>
+          </button>
+          <mat-menu #filter="matMenu">
+              <button color="primary" (click)="onFilter(val)" *ngFor="let val of modelGroup" mat-menu-item>
+                  <mat-icon *ngIf="val.visible">check_circle</mat-icon>
+                  <mat-icon *ngIf="!val.visible">indeterminate_check_box</mat-icon>
+                  {{val?.label}}</button>
+          </mat-menu>
+    
+
+  </mat-toolbar-row>
+  
+  <mat-toolbar-row *ngIf="showSingleActions()">
+      <span>{{selection.selected.length}} record(s) selected</span>
+      <span fxFlex></span>
+      <button color="primary" (click)="edit.emit(selection.selected)" mat-icon-button [disabled]="!showSingleActions()">
+          <mat-icon>edit</mat-icon>
+      </button>
+      <button color="warn" mat-icon-button>
+          <mat-icon>delete</mat-icon>
+      </button>
+  </mat-toolbar-row>
+
+  <mat-toolbar-row *ngIf="showMultipleActions()">
+      <span>{{selection.selected.length}} record(s) selected</span>
+      <span fxFlex></span>
+      <button color="warn" mat-icon-button>
+          <mat-icon>delete_forever</mat-icon>
+      </button>
+  </mat-toolbar-row>
+
+</mat-toolbar>
+
+<mat-table #table [dataSource]="dataSource" class="mat-elevation-z8">
+
+  <!-- Checkbox Column -->
+  <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox #dtCheckBoxGroup (change)="onSelectAll(dtCheckBoxGroup)" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+          <mat-checkbox #dtCheckBox (click)="$event.stopPropagation()" (change)="onSelect(dtCheckBox)" (change)="$event ? selection.toggle(row) : null"
+              [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+      </mat-cell>
+  </ng-container>
+
+  <ng-container *ngFor="let model of modelGroup" [matColumnDef]="model.name">
+      <mat-header-cell [ngClass]="{hidden:!model.visible}" *matHeaderCellDef> {{model.label}} </mat-header-cell>
+      <mat-cell [ngClass]="{hidden:!model.visible}" *matCellDef="let element"> {{element[model.name]}} </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row dataTableHighlight *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></mat-row>
+</mat-table>
