@@ -1,5 +1,19 @@
-<p>
-  columns works!
-  <button (click)="buttonClick()">Change</button>
-  <app-data-table [models]="models" [modelGroup]="modelGroup" [columns$]="subject$"></app-data-table>
-</p>
+columns works!
+<button (click)="buttonClick()">Change</button>
+<button (click)="animateOut()">FlyOut</button>
+<button (click)="animateIn()">FlyIn</button>
+
+<section  gdColumns="auto">
+
+  <div [@flyOut]="animateState" [ngStyle]="{'width':'100%','borderStyle':'solid'}">
+    yo
+  </div>
+  <div [@flyIn]="animateState" [ngStyle]="{'width':'100%','borderStyle':'solid'}">
+    hello
+  </div>
+</section>
+<!-- <app-data-table [models]="models" [modelGroup]="modelGroup" [columns$]="subject$"></app-data-table> -->
+<!-- 
+  <mat-card  [@flyIn]="animateState">
+    Hola
+  </mat-card> -->
